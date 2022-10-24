@@ -1,0 +1,20 @@
+1 - Instalação
+    1.1 - É preciso instalar o node. primeiramente
+    1.2 - Com o node instalado, instalamos o expo com o comando (no cmd): npm install --global expo-cli
+    1.3 - Para criar o projeto: expo init nome_do_projeto
+    1.4 - Selecionar a opção blank
+    1.5 - Acessar a pasta criada: cd nome_do_projeto
+    1.6 - Na pasta acessada, para iniciar o projeto: npm start
+    1.7 - Daí é só escanear o QRcode e sair testando
+
+Mais anotações sobre códigos, estarão descritas como comentários, outras anotações e visões pessoais estarão abaixo dessa linha
+
+2 - Anotações Pessoais
+    2.1 - Link da playlist OneBitCode no youtube: https://www.youtube.com/playlist?list=PLdDT8if5attEd4sRnZBIkNihR-_tE612_
+    2.2 - Se o nome de usuário do computador possuir algum caractere especial como "ã", "{espaço}, "é" ou afins, é necessário
+          criar na raiz, o expo é chato com essa questão, por via das dúvidas, inicie o arquivo em "C://" (só por via das
+          dúvidas)
+    2.3 - Se por algum motivo o expo insistir em não abrir no celular, desative o firewall do windows
+    2.4 - Para rodar normalmente o projeto basta excluir todos os comentários criados
+    2.5 - Como as pastas .expo, .expo-shared node _modules são criadas automaticamente, basta você criar o projeto que elas
+          serão criadas, copiar os arquivos desse projeto e cole-os aqui.
