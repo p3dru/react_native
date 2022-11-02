@@ -1,14 +1,14 @@
 import React from "react";                        //importa o react
 import { StyleSheet, View } from 'react-native'   //importa os elementos utilizados no arquivo
 import Title from './src/components/Title/'       //importa a função Title que foi definida em Title em src\components\Title\index.js
-import Main from './src/components/Main'
+import Form from './src/components/Form/'
 
 
 export default function App() {
   return (
     <View style={styles.container}>
-      <Title/>                                    //aplica a função passada pelo import Title
-      <Main/>
+      <Title/>                                    
+      <Form/>
     </View>
   );
 }
