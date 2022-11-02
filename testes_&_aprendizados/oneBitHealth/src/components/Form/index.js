@@ -1,5 +1,5 @@
 import React, {useState} from "react"
-import {TextInput, Text, View, TouchableOpacity} from "react-native"            //TouchableOpacity serve para dar efeito de opacidade
+import {TextInput, Text, View, TouchableOpacity, Vibration, Pressable, Keyboard, FlatList} from "react-native"            //TouchableOpacity serve para dar efeito de opacidade
 import ResultImc from "./ResultImc"
 import styles from "./style"
 
@@ -15,10 +15,39 @@ export default function Form(){
     const [messageImc, setMessageImc] = useState("Preencha peso e altura")
     const [imc, setImc] = useState(null)
     const [textButton, setTextButton] = useState("Calcular")
+    const [errorMessage, setErrorMessage] = useState(null)
+    //const [errorMessageWeight, setErrorMessageWeight] = useState(null)
+    //const [errorMessageHeight, setErrorMessageHeight] = useState(null)
+    const [imcList, setImcList] = useState([])
 
+    function imcCalculator(){                                  //faz o cálculo de imc e seta a const Imc como o retorno do cálculo
+        let heightFormat = height.replace(",",".")
+        let weightFormat = weight.replace(",",".")
+        let totalImc = ((weightFormat /(heightFormat * heightFormat)).toFixed(2))   //to fixed é pra deixar com 2 casas decimais
+        setImcList ((arr) => [...arr, {id: new Date().getTime(), imc: totalImc}])
+        setImc(totalImc)
+    }
 
-    function imcCalculator(){                                   //faz o cálculo de imc e seta a const Imc como o retorno do cálculo
-        return setImc((weight /(height * height)).toFixed(2))   //to fixed é pra deixar com 2 casas decimais
+    function verificationHeight(){
+        if(height == null){
+            Vibration.vibrate();
+            setErrorMessageHeight("Campo Obrigatório*")
+        }
+    }
+
+    function verificationWeight(){
+        if(weight == null){
+            Vibration.vibrate();
+            setErrorMessageWeight("Campo Obrigatório*")
+        }
+    }
+
+    function verificationImc(){
+        if(imc == null){
+            Vibration.vibrate();
+            setErrorMessage("Campo Obrigatório*")
+        }
+
     }
 
     function validationImc(){
@@ -29,40 +58,58 @@ export default function Form(){
             setWeight(null)
             setMessageImc("Seu Imc é igual a: ")
             setTextButton("Calcular Novamente")
-            return                                              //retorna os estados paras as contantes, apenas altera, não exibe
+            setErrorMessage(null)                      //retorna os estados paras as contantes, apenas altera, não exibe
+        }
+        else{
+            verificationImc()
+            setImc(null)
+            setTextButton("Calcular")
+            setMessageImc("Preencha Peso e Altura")
         }
         /*setam os novos valores passando novos estados, após a chamada da função, ou seja, os valores que foram chamados na função
         já foram exibidos e atualizados, só que é necessário refazer o processo para exibir os novos valores atualizados*/
-        setImc(null)
-        setTextButton("Calcular")
-        setMessageImc("Preencha Peso e Altura")
     }
 
 
     return(
         <View style={styles.formContext}>
-            <View style={styles.form}>
-                <Text style={styles.formLabel}>Altura</Text>
-                <TextInput style={styles.input} onChangeText={setHeight} value={height} placeholder="Ex. 1.75" keyboardType="numeric"/>
-                /*o "placeholder" serve apenas para dar um texto de exemplo no local a ser inserido
-                "keyboardType" serve para indicar o tipo de teclado que queremos chamar ao clicar nesse local de input
-                O onChangeText serve para alterar o estado da const a cada vez que é digitado algo no teclado
-                Value é para que o valor seja exatamente o valor presente na const*/
-
-
-                <Text style={styles.formLabel}>Peso</Text>
-                <TextInput style={styles.input} onChangeText={setWeight} value={weight} placeholder="Ex. 80.750" keyboardType="numeric"/>
-                //Mesma explicação das linhas 47, 48, 49 e 50
+            {imc == null ? 
+                <Pressable onPress={Keyboard.dismiss} style={styles.form}>
+                
+                    <Text style={styles.formLabel}>Altura</Text>
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    <TextInput style={styles.input} onChangeText={setHeight} value={height} placeholder="Ex. 1.75" keyboardType="numeric"/>
+                    
+                    <Text style={styles.formLabel}>Peso</Text>
+                    <Text style={styles.errorMessage}>{errorMessage}</Text>
+                    <TextInput style={styles.input} onChangeText={setWeight} value={weight} placeholder="Ex. 80.750" keyboardType="numeric"/>
+                    <TouchableOpacity style={styles.buttonCalculator} onPress={() => {validationImc()}}>
+                        <Text style={styles.textButtonCalculator}>{textButton}</Text>
+                    </TouchableOpacity>
+                </Pressable>
+            :
+            <View style={styles.exhibitionResultImc}>
+                <ResultImc messageResultImc={messageImc} resultImc={imc}/>
                 <TouchableOpacity style={styles.buttonCalculator} onPress={() => {validationImc()}}>
-                    //onPress aqui, chama a função apartir de quando o botão definido por TouchableOpacity é pressionado
                     <Text style={styles.textButtonCalculator}>{textButton}</Text>
-                    /*{textButton} é para que o valor passado no texto seja sempre o valor que consta nessa variável, ou seja, ele
-                    torna o texto dinâmico*/
                 </TouchableOpacity>
             </View>
-            <ResultImc messageResultImc={messageImc} resultImc={imc}/>
-            /*messageImc e imc são consts definidas em Form/index.js e elas passam o valor das variáveis messageResultImc e resultImc que
-            são passadas como props em Form/ResultImc/index.js nas linhas 9 e 10*/
+            }
+            <FlatList
+            showsVerticalScrollIndicator={false}
+            style={styles.listImcs}
+            data={imcList.reverse()}
+            renderItem={({item}) => {
+                return(
+                    <Text style={styles.resultImcItem}>
+                        <Text style={styles.textResultImcItemList}>Resultado Imc =</Text>
+                        {item.imc}
+                    </Text>
+                )
+            }}
+            keyExtractor={(item) => {
+                item.id
+            }}/>
         </View>
-    )
+    );
 }
